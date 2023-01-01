@@ -55,7 +55,7 @@ func launchApp() {
 		launcher.StartOnWindows(frontendPath, chromeLauncher)
 		return
 	case "darwin": // "mac"
-		panic("Darwin Not Supported Yet")
+		panic("Darwin/Mac Will Not Be Supported")
 		return
 	case "linux": // "linux"
 		initHTTPHandlers()
