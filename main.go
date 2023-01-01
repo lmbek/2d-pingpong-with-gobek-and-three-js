@@ -20,21 +20,19 @@ var chromeLauncher = launcher.ChromeLauncher{
 	LocationCMD:             "C:\\\"Program Files\"\\Google\\Chrome\\Application\\chrome.exe",
 	FrontendInstallLocation: os.Getenv("localappdata") + "\\Google\\Chrome\\InstalledApps\\" + organisationName + "\\" + projectName,
 	Domain:                  "localhost",
-	PortMin:                 11430,
-	PreferredPort:           11451,
-	PortMax:                 11500,
+	PortMin:                 35000,
+	PreferredPort:           35050,
+	PortMax:                 35100,
 }
 
-var chromiumLauncher = launcher.DefaultChromiumLauncher // default chrome or chromium launcher settings can be used like this
-/* // Otherwise they can also be customized like this
 var chromiumLauncher = launcher.ChromiumLauncher{
 	Location:      "/var/lib/snapd/desktop/applications/chromium_chromium.desktop", // TODO: check if better location or can be customised
 	Domain:        "localhost",
-	PortMin:       11430,
-	PreferredPort: 11451,
-	PortMax:       11500,
+	PortMin:       35000,
+	PreferredPort: 35050,
+	PortMax:       35100,
 }
-*/
+
 
 func main() {
 	launchApp()
