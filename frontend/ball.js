@@ -4,6 +4,9 @@ class Ball extends THREE.Group {
     xVelocity = 0
     yVelocity = 0
     velocity = null
+    baseSpeed = 1
+    speed = this.baseSpeed
+    numberOfHits = 0
 
     constructor(){
         super();
@@ -28,6 +31,10 @@ class Ball extends THREE.Group {
         this.yVelocity = this.getRandomInteger(-0.7, 0.7)
     }
 
+    increaseSpeed(){
+        this.speed = this.baseSpeed * ((1-1 / (1 + 0.3 * this.numberOfHits))+1) // add 30% speed
+    }
+
     updateBall(){
         // update bounding meshes
         this.boundingMesh.copy(this.mesh.geometry.boundingSphere).applyMatrix4(this.mesh.matrixWorld)
@@ -37,6 +44,8 @@ class Ball extends THREE.Group {
         this.velocity = new THREE.Vector3(this.xVelocity, this.yVelocity, 0)
         // normalize the velocity vector, to make it uniform
         this.velocity.normalize()
+        // scale the velocity with speed
+        this.velocity.multiplyScalar(this.speed)
         // make the ball move
         this.mesh.position.add(this.velocity)
     }
