@@ -1,24 +1,32 @@
 class PlayerLeft extends Player {
 
     constructor() {
-        super();
-    }
+        super()
 
-    setupKeyControls() {
-        var cube = scene.getObjectByName('batLeft')
-        document.onkeydown = function(e) {
-            switch (e.keyCode){
-                case 87: // W key
-                    console.log("W key pressed")
-                    cube.position.y -= 1; // change y by -1, UP
-                    break;
-                case 83: // S key
-                    console.log("S key pressed")
-                    cube.position.y += 1; // change y by +1, DOWN
-                    break;
+        window.addEventListener("keypress", (event)=>{
+            if(event.key === "w"){
+                //console.log("w clicked")
+
+                if(this.mesh.position.y < 75) {
+                    // move up
+                    this.mesh.position.y += this.speed
+                }
             }
-        };
+            if(event.key === "s"){
+                //console.log("s clicked")
+
+                if(this.mesh.position.y > -75) {
+                    // move up
+                    this.mesh.position.y -= this.speed
+                }
+            }
+        })
     }
 
+    changePosition() {
+        super.changePosition()
+        // mesh x position
+        this.mesh.position.x = -145;
+    }
 
 }

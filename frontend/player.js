@@ -1,37 +1,25 @@
 class Player extends THREE.Group {
-    mesh = new THREE.Mesh(new THREE.BoxGeometry(5, 15, 0));
+    mesh = new THREE.Mesh(new THREE.BoxGeometry(5, 15, 0))
+    boundingMesh = new THREE.Box3(new THREE.Vector3(), new THREE.Vector3())
+    speed = 5
 
     constructor() {
-        super();
+        super()
         this.changePosition()
 
-        window.addEventListener("keypress", (event)=>{
-            if(event.key === "w"){
-                console.log("w clicked")
-
-                if(this.mesh.position.y < 76) {
-                    // move up
-                    this.mesh.position.y += 1;
-                }
-            }
-            if(event.key === "s"){
-                console.log("s clicked")
-
-                if(this.mesh.position.y > -76) {
-                    // move up
-                    this.mesh.position.y -= 1;
-                }
-            }
-        })
-
         // add mesh
-        this.add(this.mesh);
+        this.add(this.mesh)
+        this.boundingMesh.setFromObject(this.mesh)
     }
 
     changePosition() {
-        // mesh
-        this.mesh.position.z = 0;
+        // mesh z position
+        this.mesh.position.z = 0
+    }
 
-        this.mesh.position.x = -145;
+    updatePlayer(){
+        // update bounding meshes
+        this.boundingMesh.copy(this.mesh.geometry.boundingBox).applyMatrix4(this.mesh.matrixWorld)
+        //console.log(this.boundingMesh)
     }
 }
