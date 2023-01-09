@@ -35,7 +35,7 @@ class Ball extends THREE.Group {
         this.speed = this.baseSpeed * ((1-1 / (1 + 0.3 * this.numberOfHits))+1) // add 30% speed
     }
 
-    updateBall(){
+    update(){
         // update bounding meshes
         this.boundingMesh.copy(this.mesh.geometry.boundingSphere).applyMatrix4(this.mesh.matrixWorld)
         //console.log(this.boundingMesh)

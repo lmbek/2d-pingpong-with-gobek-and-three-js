@@ -2,25 +2,22 @@ class PlayerLeft extends Player {
 
     constructor() {
         super()
+    }
 
-        window.addEventListener("keypress", (event)=>{
-            if(event.key === "w"){
-                //console.log("w clicked")
-
-                if(this.mesh.position.y < 75) {
-                    // move up
-                    this.mesh.position.y += this.speed
-                }
+    update(){
+        super.update()
+        if(this.input.isKeyWDown){
+            if(this.mesh.position.y < 75) {
+                // move up
+                this.mesh.position.y += this.speed
             }
-            if(event.key === "s"){
-                //console.log("s clicked")
-
-                if(this.mesh.position.y > -75) {
-                    // move up
-                    this.mesh.position.y -= this.speed
-                }
+        }
+        if(this.input.isKeySDown){
+            if(this.mesh.position.y > -75) {
+                // move up
+                this.mesh.position.y -= this.speed
             }
-        })
+        }
     }
 
     changePosition() {
