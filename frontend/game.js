@@ -8,8 +8,8 @@ const playerRight = new PlayerRight()
 const ball = new Ball()
 const walls = [new Wall(85), new Wall(-85)]
 const goals = [new Goal(-160), new Goal(160)]
-var scorePlayerLeft = 0
-var scorePlayerRight = 0
+let scorePlayerLeft = 0
+let scorePlayerRight = 0
 
 // add player to scene
 //scene.add(player)
@@ -47,10 +47,10 @@ window.setInterval(()=>{
     renderer.render(scene, camera)
 
     // game logic
-    ball.updateBall()
+    ball.update()
 
-    playerLeft.updatePlayer()
-    playerRight.updatePlayer()
+    playerLeft.update()
+    playerRight.update()
 
     collision()
 
@@ -78,11 +78,17 @@ function collision(){
     if(ball.boundingMesh.intersectsBox(goals[0].boundingMesh)){
         //console.log("left")
         scorePlayerRight += 1
+
+        ball.mesh.position.x = 0
+        ball.mesh.position.y = 0
     }
 
     // ball collision with right goal
     if(ball.boundingMesh.intersectsBox(goals[1].boundingMesh)){
         //console.log("right")
         scorePlayerLeft += 1
+
+        ball.mesh.position.x = 0
+        ball.mesh.position.y = 0
     }
 }
