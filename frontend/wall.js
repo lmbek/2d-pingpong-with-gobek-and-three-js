@@ -1,21 +1,15 @@
 class Wall extends THREE.Group {
-    mesh = new THREE.Mesh(new THREE.BoxGeometry(window.innerWidth, 5, 0));
-    boundingMesh = new THREE.Box3(new THREE.Vector3(), new THREE.Vector3())
-    yPosition = 0
+    geometry  = new THREE.BoxGeometry(285, 5, 0);
+    material = new THREE.MeshBasicMaterial( {color: 0xC4A484} );
+    mesh = new THREE.Mesh(this.geometry, this.material);
 
-    constructor(yPosition) {
+    constructor(y) {
         super()
-        this.yPosition = yPosition
-        this.setPosition()
+        this.mesh.position.x = 0
+        this.mesh.position.y = y
+        this.mesh.position.z = 0
 
         // add mesh
         this.add(this.mesh)
-        this.boundingMesh.setFromObject(this.mesh)
-    }
-
-    setPosition() {
-        // mesh z position
-        this.mesh.position.z = 0
-        this.mesh.position.y = this.yPosition
     }
 }

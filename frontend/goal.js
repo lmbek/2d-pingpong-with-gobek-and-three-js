@@ -1,21 +1,15 @@
 class Goal extends THREE.Group {
-    mesh = new THREE.Mesh(new THREE.BoxGeometry(0, window.innerHeight, 0));
-    boundingMesh = new THREE.Box3(new THREE.Vector3(), new THREE.Vector3())
-    xPosition = 0
+    geometry  = new THREE.BoxGeometry(5, 135, 0);
+    material = new THREE.MeshBasicMaterial( {color: 0xff00ff} );
+    mesh = new THREE.Mesh(this.geometry, this.material);
 
-    constructor(xPosition) {
+    constructor(x) {
         super()
-        this.xPosition = xPosition
-        this.setPosition()
+        this.mesh.position.x = x
+        this.mesh.position.y = 0
+        this.mesh.position.z = 0
 
         // add mesh
         this.add(this.mesh)
-        this.boundingMesh.setFromObject(this.mesh)
-    }
-
-    setPosition() {
-        // mesh z position
-        this.mesh.position.z = 0
-        this.mesh.position.x = this.xPosition
     }
 }

@@ -9,8 +9,8 @@ import (
 )
 
 // For windows we need a organisation name and project name
-var organisationName = "NewOrganisationName" // put in organisation name
-var projectName = "NewProjectName"           // put in project name
+var organisationName = "Development" // put in organisation name
+var projectName = "PingPong"         // put in project name
 
 var frontendPath = "./frontend" // this should be set to where frontend files is (frontend folder: html, css, javascript...)
 
@@ -32,7 +32,6 @@ var chromiumLauncher = launcher.ChromiumLauncher{
 	PreferredPort: 35050,
 	PortMax:       35100,
 }
-
 
 func main() {
 	launchApp()

@@ -1,94 +1,170 @@
-// initialize scene
-const scene = new THREE.Scene()
+class Game {
 
-// set up player
-//const player = new Player()
-const playerLeft = new PlayerLeft()
-const playerRight = new PlayerRight()
-const ball = new Ball()
-const walls = [new Wall(85), new Wall(-85)]
-const goals = [new Goal(-160), new Goal(160)]
-let scorePlayerLeft = 0
-let scorePlayerRight = 0
 
-// add player to scene
-//scene.add(player)
-scene.add(playerLeft)
-scene.add(playerRight)
-scene.add(ball)
-scene.add(walls[0])
-scene.add(walls[1])
-scene.add(goals[0])
-scene.add(goals[1])
+    constructor() {
+        this.scene = new THREE.Scene();
+        this.playerLeft = new PlayerLeft(-134, 0xff0000);
+        this.playerRight = new PlayerRight(134, 0x0000ff);
+        this.ball = new Ball();
+        this.walls = [new Wall(70), new Wall(-70)];
+        this.goals = [new Goal(-140), new Goal(140)]; // 160
+        this.scorePlayerLeft = 0;
+        this.scorePlayerRight = 0;
+        this.aspectRatio = 16 / 9;
+        this.cameraWidth = 300;
+        this.cameraHeight = this.cameraWidth / this.aspectRatio;
+        this.camera = new THREE.OrthographicCamera(
+            this.cameraWidth / -2,
+            this.cameraWidth / 2,
+            this.cameraHeight / 2,
+            this.cameraHeight / -2,
+            0,
+            1000,
+        );
+        this.camera.position.set(0, 0, 1000);
+        this.renderer = new THREE.WebGLRenderer({antialias: true});
 
-// set up camera
-const aspectRatio = 16/9 //const aspectRatio = window.innerWidth / window.innerHeight
-const cameraWidth = 300
-const cameraHeight = cameraWidth / aspectRatio
-const camera = new THREE.OrthographicCamera(
-    cameraWidth / -2, // left
-    cameraWidth / 2, // right
-    cameraHeight / 2, // top
-    cameraHeight / -2, // bottom
-    0, // near plane
-    1000 // far plane
-)
-camera.position.set(0, 0, 1000)
-//camera.up.set(0, 0, 1)
-//camera.lookAt(0, 0, 0)
+        let width = window.innerWidth;
+        let height = window.innerHeight;
 
-// set up renderer
-const renderer = new THREE.WebGLRenderer({ antialias: true })
-renderer.setSize(window.innerWidth, window.innerHeight)
-//renderer.render(scene, camera)
+        if (width / height > this.aspectRatio) {
+            width = height * this.aspectRatio;
+        } else {
+            height = width / this.aspectRatio;
+        }
 
-// render all
-window.setInterval(()=>{
-    renderer.render(scene, camera)
+        this.renderer.setSize( width, height);
+        this.renderer.setViewport( 0, 0, width, height);
+        this.camera.aspect = this.aspectRatio;
+        this.camera.updateProjectionMatrix();
 
-    // game logic
-    ball.update()
+        addEventListener("resize", (event) => {
+            let width = window.innerWidth;
+            let height = window.innerHeight;
 
-    playerLeft.update()
-    playerRight.update()
+            if (width / height > this.aspectRatio) {
+                width = height * this.aspectRatio;
+            } else {
+                height = width / this.aspectRatio;
+            }
 
-    collision()
-
-    console.log("Score: ", scorePlayerLeft, "/", scorePlayerRight)
-}, 1000/60)
-
-document.body.appendChild(renderer.domElement)
-
-function collision(){
-    // ball collision with walls
-    if(ball.boundingMesh.intersectsBox(walls[0].boundingMesh) || ball.boundingMesh.intersectsBox(walls[1].boundingMesh)){
-        ball.yVelocity = -ball.yVelocity
+            this.renderer.setSize( width, height);
+            this.renderer.setViewport( 0, 0, width, height);
+            this.camera.aspect = this.aspectRatio;
+            this.camera.updateProjectionMatrix();
+        });
+        document.body.appendChild(this.renderer.domElement);
     }
 
-    // ball collision with players
-    if(ball.boundingMesh.intersectsBox(playerLeft.boundingMesh) || ball.boundingMesh.intersectsBox(playerRight.boundingMesh)) {
-        ball.xVelocity = -ball.xVelocity
-        // increase ball speed
-        ball.numberOfHits += 1
-        ball.increaseSpeed()
-        console.log(ball.speed)
+    start() {
+        // Add objects to scene
+        this.scene.add(this.playerLeft);
+        this.scene.add(this.playerRight);
+        this.scene.add(this.ball);
+        this.scene.add(this.walls[0]);
+        this.scene.add(this.walls[1]);
+        this.scene.add(this.goals[0]);
+        this.scene.add(this.goals[1]);
+
+        this.updateUI()
+        // start update method
+        this.interval = window.setInterval(() => {
+            this.update()
+        }, 1000 / 60);
     }
 
-    // ball collision with left goal
-    if(ball.boundingMesh.intersectsBox(goals[0].boundingMesh)){
-        //console.log("left")
-        scorePlayerRight += 1
-
-        ball.mesh.position.x = 0
-        ball.mesh.position.y = 0
+    update() {
+        this.renderer.render(this.scene, this.camera);
+        this.collision();
+        this.ball.update();
+        this.playerLeft.update();
+        this.playerRight.update();
     }
 
-    // ball collision with right goal
-    if(ball.boundingMesh.intersectsBox(goals[1].boundingMesh)){
-        //console.log("right")
-        scorePlayerLeft += 1
+    stop() {
+        window.clearInterval(this.interval);
+    }
 
-        ball.mesh.position.x = 0
-        ball.mesh.position.y = 0
+    updateUI(){
+        document.getElementById("score").innerText = "Score: "+this.scorePlayerLeft+" / "+this.scorePlayerRight
+    }
+
+    collision() {
+        this.handleGoalCollision()
+        //this.handleLeftPlayerCollisionWithRaycast()
+        this.handleLeftPlayerCollisions()
+        this.handleRightPlayerCollisions()
+        this.handleTopWallCollisions()
+        this.handleBottomWallCollisions()
+    }
+
+    handleGoalCollision() {
+
+        if (this.ball.mesh.position.x - this.ball.mesh.geometry.parameters.radius < this.goals[0].mesh.position.x + this.goals[0].mesh.geometry.parameters.width/2
+            && this.ball.mesh.position.x + this.ball.mesh.geometry.parameters.radius > this.goals[0].mesh.position.x - this.goals[0].mesh.geometry.parameters.width/2
+            && this.ball.mesh.position.y + this.ball.mesh.geometry.parameters.radius > this.goals[0].mesh.position.y - this.goals[0].mesh.geometry.parameters.height/2
+            && this.ball.mesh.position.y - this.ball.mesh.geometry.parameters.radius < this.goals[0].mesh.position.y + this.goals[0].mesh.geometry.parameters.height/2){
+            // Left goal collision detected!
+            this.scorePlayerRight += 1;
+            this.updateUI()
+            this.ball.mesh.position.x = 0;
+            this.ball.mesh.position.y = 0;
+            this.ball.velocity.x = 0;
+            this.ball.velocity.y = 0;
+            this.playerLeft.started = false
+        }
+        if (this.ball.mesh.position.x - this.ball.mesh.geometry.parameters.radius < this.goals[1].mesh.position.x + this.goals[1].mesh.geometry.parameters.width/2
+            && this.ball.mesh.position.x + this.ball.mesh.geometry.parameters.radius > this.goals[1].mesh.position.x - this.goals[1].mesh.geometry.parameters.width/2
+            && this.ball.mesh.position.y + this.ball.mesh.geometry.parameters.radius > this.goals[1].mesh.position.y - this.goals[1].mesh.geometry.parameters.height/2
+            && this.ball.mesh.position.y - this.ball.mesh.geometry.parameters.radius < this.goals[1].mesh.position.y + this.goals[1].mesh.geometry.parameters.height/2){
+            // Right goal collision detected!
+            this.scorePlayerLeft += 1;
+            this.updateUI()
+            this.ball.mesh.position.x = 0;
+            this.ball.mesh.position.y = 0;
+            this.ball.velocity.x = 0;
+            this.ball.velocity.y = 0;
+            this.playerLeft.started = false
+        }
+    }
+
+    handleTopWallCollisions(){
+        // check if ball collides with top wall
+        if (this.ball.mesh.position.y + this.ball.mesh.geometry.parameters.radius > this.walls[0].mesh.position.y - this.walls[0].mesh.geometry.parameters.height/2) {
+            this.ball.velocity.y = -this.ball.velocity.y;
+        }
+    }
+
+    handleBottomWallCollisions(){
+        // check if ball collides with bottom wall
+        if (this.ball.mesh.position.y - this.ball.mesh.geometry.parameters.radius < this.walls[1].mesh.position.y + this.walls[1].mesh.geometry.parameters.height/2) {
+            this.ball.velocity.y = -this.ball.velocity.y;
+        }
+    }
+
+    handleLeftPlayerCollisions(){
+        // check if ball collides with player
+        if (this.ball.mesh.position.x - this.ball.mesh.geometry.parameters.radius < this.playerLeft.mesh.position.x + this.playerLeft.mesh.geometry.parameters.width/2
+            && this.ball.mesh.position.x + this.ball.mesh.geometry.parameters.radius > this.playerLeft.mesh.position.x - this.playerLeft.mesh.geometry.parameters.width/2
+            && this.ball.mesh.position.y + this.ball.mesh.geometry.parameters.radius > this.playerLeft.mesh.position.y - this.playerLeft.mesh.geometry.parameters.height/2
+            && this.ball.mesh.position.y - this.ball.mesh.geometry.parameters.radius < this.playerLeft.mesh.position.y + this.playerLeft.mesh.geometry.parameters.height/2){
+            // collision detected!
+            this.ball.velocity.x = -this.ball.velocity.x;
+            this.ball.increaseSpeed();
+        }
+    }
+
+    handleRightPlayerCollisions(){
+        // check if ball collides with playerRight
+        if (this.ball.mesh.position.x - this.ball.mesh.geometry.parameters.radius < this.playerRight.mesh.position.x + this.playerRight.mesh.geometry.parameters.width/2
+            && this.ball.mesh.position.x + this.ball.mesh.geometry.parameters.radius > this.playerRight.mesh.position.x - this.playerRight.mesh.geometry.parameters.width/2
+            && this.ball.mesh.position.y + this.ball.mesh.geometry.parameters.radius > this.playerRight.mesh.position.y - this.playerRight.mesh.geometry.parameters.height/2
+            && this.ball.mesh.position.y - this.ball.mesh.geometry.parameters.radius < this.playerRight.mesh.position.y + this.playerRight.mesh.geometry.parameters.height/2){
+            // collision detected!
+            this.ball.velocity.x = -this.ball.velocity.x;
+            this.ball.increaseSpeed();
+        }
     }
 }
+    const game = new Game();
+    game.start();
