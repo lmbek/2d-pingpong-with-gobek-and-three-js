@@ -1,29 +1,29 @@
 class PlayerLeft extends Player {
-
-    constructor() {
-        super()
-    }
+    started = false
 
     update(){
-        super.update()
         if(this.input.isKeyWDown){
-            if(this.mesh.position.y < 75) {
+            if(this.mesh.position.y < 54) {
                 // move up
                 this.mesh.position.y += this.speed
             }
         }
         if(this.input.isKeySDown){
-            if(this.mesh.position.y > -75) {
+            if(this.mesh.position.y > -54) {
                 // move up
                 this.mesh.position.y -= this.speed
             }
         }
-    }
 
-    changePosition() {
-        super.changePosition()
-        // mesh x position
-        this.mesh.position.x = -145;
+        if(this.input.isSpaceDown&&this.started===false){
+            this.started = true
+            document.getElementById("info").innerText = ""
+            // set initial ball position
+            game.ball.setInitialMovement()
+        } else if(this.started===false) {
+            document.getElementById("info").innerText = "Press Space to start round"
+        } else if(this.started===true){
+            document.getElementById("info").innerText = ""
+        }
     }
-
 }
