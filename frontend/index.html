@@ -5,7 +5,36 @@
     <title>PingPong by Ida Marcher Jensen</title>
     <link rel="icon" href="icon.png">
     <style>
-        body { margin: 0; background: lightgreen; }
+        body { margin: 0; background: black; }
+
+        canvas {
+            margin: auto;
+            z-index: 150;
+        }
+
+        #score {
+            position: absolute;
+            text-align: center;
+            font-size: 2em;
+            z-index: 110;
+            grid-template-columns: 1fr;
+
+            color: yellow;
+            background: rgba(0,0,0,0.5);
+
+            user-select: none;
+        }
+        #info {
+            position: absolute;
+            font-size: 2em;
+            width: 100%;
+            text-align: center;
+            z-index: 100;
+            color: yellow;
+            background: rgba(0,0,0,0.5);
+
+            user-select: none;
+        }
     </style>
 </head>
 <body>
@@ -13,8 +42,9 @@
     <p style="text-align: center;">Loading game...</p>
     <noscript><p style="text-align: center;">You have disabled JavaScript. You cannot play this game without JavaScript - loading aborted</p></noscript>
 </div>-->
+<div id="score"></div>
+<div id="info"></div>
 <script src="three.js"></script>
-<script src="scene.js"></script>
 <script src="input.js"></script>
 <script src="player.js"></script>
 <script src="player-left.js"></script>
