@@ -1,11 +1,10 @@
 class Ball extends THREE.Group {
-    mesh = new THREE.Mesh(new THREE.SphereGeometry(1))
-    boundingMesh = new THREE.Sphere(this.mesh.position, 1)
-    xVelocity = 0
-    yVelocity = 0
-    velocity = null
+    geometry  = new THREE.SphereGeometry(1);
+    material = new THREE.MeshBasicMaterial( {color: 0xffffff} );
+    mesh = new THREE.Mesh(this.geometry, this.material);
+    velocity = new THREE.Vector3(0,0,0)
     baseSpeed = 1
-    speed = this.baseSpeed
+    speed = 1
     numberOfHits = 0
 
     constructor(){
@@ -14,9 +13,6 @@ class Ball extends THREE.Group {
 
         // add mesh
         this.add(this.mesh);
-
-        // set initial position
-        this.setInitialMovement()
     }
 
     getRandomInteger(min, max){
@@ -25,10 +21,10 @@ class Ball extends THREE.Group {
 
     setInitialMovement(){
         // the ball can go left or right randomly at the beginning
-        this.xVelocity = Math.random() > 0.5 ? -1 : 1 // if random value (decimal between 0-1) is above 0.5, then -1 else 1
+        this.velocity.x = Math.random() > 0.5 ? -1 : 1 // if random value (decimal between 0-1) is above 0.5, then -1 else 1
 
         // set the y at angle 45
-        this.yVelocity = this.getRandomInteger(-0.7, 0.7)
+        this.velocity.y = this.getRandomInteger(-0.7, 0.7)
     }
 
     increaseSpeed(){
@@ -36,12 +32,6 @@ class Ball extends THREE.Group {
     }
 
     update(){
-        // update bounding meshes
-        this.boundingMesh.copy(this.mesh.geometry.boundingSphere).applyMatrix4(this.mesh.matrixWorld)
-        //console.log(this.boundingMesh)
-
-        // set velocity
-        this.velocity = new THREE.Vector3(this.xVelocity, this.yVelocity, 0)
         // normalize the velocity vector, to make it uniform
         this.velocity.normalize()
         // scale the velocity with speed
