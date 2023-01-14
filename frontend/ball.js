@@ -28,7 +28,7 @@ class Ball extends THREE.Group {
     }
 
     increaseSpeed(){
-        this.speed = this.baseSpeed * ((1-1 / (1 + 0.3 * this.numberOfHits))+1) // add 30% speed
+        this.speed = this.baseSpeed + 0.1 * game.numberOfHits
     }
 
     update(){
@@ -38,6 +38,17 @@ class Ball extends THREE.Group {
         this.velocity.multiplyScalar(this.speed)
         // make the ball move
         this.mesh.position.add(this.velocity)
+    }
+
+    reset(){
+        game.updateUI()
+        this.mesh.position.x = 0;
+        this.mesh.position.y = 0;
+        this.velocity.x = 0;
+        this.velocity.y = 0;
+        this.speed = this.baseSpeed
+        game.numberOfHits = 0
+        game.playerLeft.started = false
     }
 }
 
