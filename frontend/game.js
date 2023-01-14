@@ -1,6 +1,4 @@
 class Game {
-
-
     constructor() {
         this.scene = new THREE.Scene();
         this.playerLeft = new PlayerLeft(-134, 0xff0000);
@@ -10,6 +8,7 @@ class Game {
         this.goals = [new Goal(-140), new Goal(140)]; // 160
         this.scorePlayerLeft = 0;
         this.scorePlayerRight = 0;
+        this.numberOfHits = 0;
         this.aspectRatio = 16 / 9;
         this.cameraWidth = 300;
         this.cameraHeight = this.cameraWidth / this.aspectRatio;
@@ -99,20 +98,16 @@ class Game {
     }
 
     handleGoalCollision() {
-
+        // check left goal
         if (this.ball.mesh.position.x - this.ball.mesh.geometry.parameters.radius < this.goals[0].mesh.position.x + this.goals[0].mesh.geometry.parameters.width/2
             && this.ball.mesh.position.x + this.ball.mesh.geometry.parameters.radius > this.goals[0].mesh.position.x - this.goals[0].mesh.geometry.parameters.width/2
             && this.ball.mesh.position.y + this.ball.mesh.geometry.parameters.radius > this.goals[0].mesh.position.y - this.goals[0].mesh.geometry.parameters.height/2
             && this.ball.mesh.position.y - this.ball.mesh.geometry.parameters.radius < this.goals[0].mesh.position.y + this.goals[0].mesh.geometry.parameters.height/2){
             // Left goal collision detected!
             this.scorePlayerRight += 1;
-            this.updateUI()
-            this.ball.mesh.position.x = 0;
-            this.ball.mesh.position.y = 0;
-            this.ball.velocity.x = 0;
-            this.ball.velocity.y = 0;
-            this.playerLeft.started = false
+            this.ball.reset()
         }
+        // check right goal
         if (this.ball.mesh.position.x - this.ball.mesh.geometry.parameters.radius < this.goals[1].mesh.position.x + this.goals[1].mesh.geometry.parameters.width/2
             && this.ball.mesh.position.x + this.ball.mesh.geometry.parameters.radius > this.goals[1].mesh.position.x - this.goals[1].mesh.geometry.parameters.width/2
             && this.ball.mesh.position.y + this.ball.mesh.geometry.parameters.radius > this.goals[1].mesh.position.y - this.goals[1].mesh.geometry.parameters.height/2
@@ -120,11 +115,7 @@ class Game {
             // Right goal collision detected!
             this.scorePlayerLeft += 1;
             this.updateUI()
-            this.ball.mesh.position.x = 0;
-            this.ball.mesh.position.y = 0;
-            this.ball.velocity.x = 0;
-            this.ball.velocity.y = 0;
-            this.playerLeft.started = false
+            this.ball.reset()
         }
     }
 
@@ -144,24 +135,28 @@ class Game {
 
     handleLeftPlayerCollisions(){
         // check if ball collides with player
-        if (this.ball.mesh.position.x - this.ball.mesh.geometry.parameters.radius < this.playerLeft.mesh.position.x + this.playerLeft.mesh.geometry.parameters.width/2
-            && this.ball.mesh.position.x + this.ball.mesh.geometry.parameters.radius > this.playerLeft.mesh.position.x - this.playerLeft.mesh.geometry.parameters.width/2
-            && this.ball.mesh.position.y + this.ball.mesh.geometry.parameters.radius > this.playerLeft.mesh.position.y - this.playerLeft.mesh.geometry.parameters.height/2
-            && this.ball.mesh.position.y - this.ball.mesh.geometry.parameters.radius < this.playerLeft.mesh.position.y + this.playerLeft.mesh.geometry.parameters.height/2){
+        if (this.ball.mesh.position.x + this.ball.velocity.x - this.ball.mesh.geometry.parameters.radius < this.playerLeft.mesh.position.x + this.playerLeft.mesh.geometry.parameters.width/2
+            && this.ball.mesh.position.x + this.ball.velocity.x + this.ball.mesh.geometry.parameters.radius > this.playerLeft.mesh.position.x - this.playerLeft.mesh.geometry.parameters.width/2
+            && this.ball.mesh.position.y + this.ball.velocity.y + this.ball.mesh.geometry.parameters.radius > this.playerLeft.mesh.position.y - this.playerLeft.mesh.geometry.parameters.height/2
+            && this.ball.mesh.position.y + this.ball.velocity.y - this.ball.mesh.geometry.parameters.radius < this.playerLeft.mesh.position.y + this.playerLeft.mesh.geometry.parameters.height/2){
             // collision detected!
+            this.ball.mesh.position.x = this.playerLeft.mesh.position.x + this.playerLeft.mesh.geometry.parameters.width/2
             this.ball.velocity.x = -this.ball.velocity.x;
+            this.numberOfHits = this.numberOfHits +1
             this.ball.increaseSpeed();
         }
     }
 
     handleRightPlayerCollisions(){
         // check if ball collides with playerRight
-        if (this.ball.mesh.position.x - this.ball.mesh.geometry.parameters.radius < this.playerRight.mesh.position.x + this.playerRight.mesh.geometry.parameters.width/2
-            && this.ball.mesh.position.x + this.ball.mesh.geometry.parameters.radius > this.playerRight.mesh.position.x - this.playerRight.mesh.geometry.parameters.width/2
-            && this.ball.mesh.position.y + this.ball.mesh.geometry.parameters.radius > this.playerRight.mesh.position.y - this.playerRight.mesh.geometry.parameters.height/2
-            && this.ball.mesh.position.y - this.ball.mesh.geometry.parameters.radius < this.playerRight.mesh.position.y + this.playerRight.mesh.geometry.parameters.height/2){
+        if (this.ball.mesh.position.x + this.ball.velocity.x - this.ball.mesh.geometry.parameters.radius < this.playerRight.mesh.position.x + this.playerRight.mesh.geometry.parameters.width/2
+            && this.ball.mesh.position.x + this.ball.velocity.x + this.ball.mesh.geometry.parameters.radius > this.playerRight.mesh.position.x - this.playerRight.mesh.geometry.parameters.width/2
+            && this.ball.mesh.position.y + this.ball.velocity.y + this.ball.mesh.geometry.parameters.radius > this.playerRight.mesh.position.y - this.playerRight.mesh.geometry.parameters.height/2
+            && this.ball.mesh.position.y + this.ball.velocity.y - this.ball.mesh.geometry.parameters.radius < this.playerRight.mesh.position.y + this.playerRight.mesh.geometry.parameters.height/2){
             // collision detected!
+            this.ball.mesh.position.x = this.playerRight.mesh.position.x - this.playerRight.mesh.geometry.parameters.width/2
             this.ball.velocity.x = -this.ball.velocity.x;
+            this.numberOfHits = this.numberOfHits +1
             this.ball.increaseSpeed();
         }
     }
