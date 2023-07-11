@@ -1,7 +1,7 @@
 # 2d-pingpong-with-golw-and-three-js
 
 ## Requirements
-Go 1.19+ <br>
+Go 1.20+ <br>
 Chrome or Chromium <br>
 
 ## How to set up
@@ -9,7 +9,7 @@ First download this repository as zip or by using
 <br>
 <br>
 <code>
-git clone https://github.com/NineNineFive/2d-pingpong-with-golw-and-three-js
+git clone https://github.com/lmbek/2d-pingpong-with-golw-and-three-js
 </code>
 <br>
 <br>
@@ -17,7 +17,7 @@ Then open CMD or terminal in your repository and
 <br>
 <br>
 <code>
-go get github.com/NineNineFive/go-local-web-gui
+go get github.com/lmbek/gobek
 </code>
 <br>
 <br>
