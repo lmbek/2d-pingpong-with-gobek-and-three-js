@@ -6,6 +6,8 @@ class Game {
         this.ball = new Ball();
         this.walls = [new Wall(70), new Wall(-70)];
         this.goals = [new Goal(-140), new Goal(140)]; // 160
+        this.rectangleRight = new Rectangle(60, 20);
+        this.rectangleLeft = new Rectangle(-60, 20);
         this.scorePlayerLeft = 0;
         this.scorePlayerRight = 0;
         this.numberOfHits = 0;
@@ -65,6 +67,9 @@ class Game {
         this.scene.add(this.goals[0]);
         this.scene.add(this.goals[1]);
 
+        //this.scene.add(this.rectangleLeft);
+        //this.scene.add(this.rectangleRight);
+
         this.updateUI()
         // start update method
         this.interval = window.setInterval(() => {
@@ -95,6 +100,53 @@ class Game {
         this.handleRightPlayerCollisions()
         this.handleTopWallCollisions()
         this.handleBottomWallCollisions()
+/*
+        const result = this.handleRectangleCollision({
+            x: 30,
+            y: 50,
+            width: 100,
+            height: 120
+        },
+        {
+            x: 35,
+            y: 100,
+            width: 150,
+            height: 250
+        });
+
+        console.log(result)
+ */
+    }
+
+    handleRectangleCollision(rect1,rect2){
+        if (
+            rect1.x + rect1.width > rect2.x &&
+            rect1.x < rect2.x + rect2.width &&
+            rect1.y + rect1.height > rect2.y &&
+            rect1.y < rect2.y + rect2.height
+        ) {
+            // Rectangles intersect
+            const xDiff = (rect1.x + rect1.width / 2) - (rect2.x + rect2.width / 2);
+            const yDiff = (rect1.y + rect1.height / 2) - (rect2.y + rect2.height / 2);
+            const w = 0.5 * (rect1.width + rect2.width);
+            const h = 0.5 * (rect1.height + rect2.height);
+            const dx = Math.abs(xDiff);
+            const dy = Math.abs(yDiff);
+
+            if (dx <= w && dy <= h) {
+                // Collision occurred
+                const wy = w * yDiff;
+                const hx = h * xDiff;
+
+                if (wy > hx) {
+                    return wy > -hx ? "bottom" : "left";
+                } else {
+                    return wy > -hx ? "right" : "top";
+                }
+            }
+            // No collision occurred
+            return null;
+        }
     }
 
     handleGoalCollision() {
